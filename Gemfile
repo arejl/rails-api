@@ -42,4 +42,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise-jwt'
 gem 'faker'
 gem 'dotenv'
+gem 'dotenv-rails'
 gem 'rack-cors'

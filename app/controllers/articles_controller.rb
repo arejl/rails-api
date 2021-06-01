@@ -16,7 +16,7 @@ class ArticlesController < ApplicationController
 
   # POST /articles
   def create
-    @article = Article.new(article_params, user_id:current_user.id)
+    @article = Article.new(title: params[:title], content:params[:content], user_id:current_user.id)
 
     if @article.save
       render json: @article, status: :created, location: @article
@@ -27,10 +27,14 @@ class ArticlesController < ApplicationController
 
   # PATCH/PUT /articles/1
   def update
-    if @article.user_id == current_user.id && @article.update(article_params)
-      render json: @article
+    if @article.user_id == current_user.id
+      if @article.update(title: params[:title], content:params[:content])
+        render json: @article
+      else
+        render json: @article.errors, status: :unprocessable_entity
+      end
     else
-      render json: @article.errors, status: :unprocessable_entity
+      render json: { message: "You cannot modify other authors' articles."}, status: :unauthorized
     end
   end
 
@@ -38,6 +42,8 @@ class ArticlesController < ApplicationController
   def destroy
     if @article.user_id == current_user.id
       @article.destroy
+    else
+      render json: { message: "You cannot delete other authors' articles."}, status: :unauthorized
     end
   end
 
