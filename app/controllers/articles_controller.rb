@@ -4,19 +4,23 @@ class ArticlesController < ApplicationController
 
   # GET /articles
   def index
-    @articles = Article.all
+    @articles = Article.public_articles
 
     render json: @articles
   end
 
   # GET /articles/1
   def show
-    render json: @article
+    if @article.private_article == false || (current_user && current_user.id == @article.user_id)
+      render json: @article
+    else
+      render json: { message: "This article is private."}, status: :unauthorized
+    end
   end
 
   # POST /articles
   def create
-    @article = Article.new(title: params[:title], content:params[:content], user_id:current_user.id)
+    @article = Article.new(title: params[:title], content:params[:content], user_id:current_user.id, private:params[:private])
 
     if @article.save
       render json: @article, status: :created, location: @article
@@ -28,7 +32,7 @@ class ArticlesController < ApplicationController
   # PATCH/PUT /articles/1
   def update
     if @article.user_id == current_user.id
-      if @article.update(title: params[:title], content:params[:content])
+      if @article.update(title: params[:title], content:params[:content], private:params[:private])
         render json: @article
       else
         render json: @article.errors, status: :unprocessable_entity

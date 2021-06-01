@@ -13,6 +13,16 @@ end
   Article.create!(
     title:Faker::Restaurant.name,
     content:Faker::Restaurant.description,
-    user_id: User.all.sample.id
+    user_id: User.all.sample.id,
+    private_article:false
+  )
+end
+
+3.times do
+  Article.create!(
+    title:Faker::Restaurant.name,
+    content:Faker::Restaurant.description,
+    user_id: User.all.sample.id,
+    private_article:true
   )
 end
